@@ -26,21 +26,27 @@ SECRET_KEY = "django-insecure-vik&oe_o2+4xgn)bhoa$!^f!0*=r3)g%_tkwoj#^-)kvmioduw
 DEBUG = True
 
 ALLOWED_HOSTS = []
+ROOT_HOSTCONF = 'forestDemo.hosts'
+DEFAULT_HOST = 'www'
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'django_forest',
+    'django_hosts',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_celery_beat",
     "books",
 ]
 
 MIDDLEWARE = [
+    'django_hosts.middleware.HostsRequestMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -48,7 +54,16 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'django_hosts.middleware.HostsResponseMiddleware',
 ]
+
+FOREST = {
+   'FOREST_URL': 'https://api.forestadmin.com',
+   'APPLICATION_URL': 'http://localhost:8000',
+   'FOREST_ENV_SECRET': '49e9d86e2afd51ee2983fe3addc33db129431a32ee64ce705f138e978f385d49',
+   'FOREST_AUTH_SECRET': '75e9d628f366a543baa7d70737884a5c5150b87862aa10d4'
+}
+APPEND_SLASH=False
 
 ROOT_URLCONF = "forestDemo.urls"
 
@@ -122,3 +137,20 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django_forest': {
+            'handlers':['console'],
+            'formatter': 'default',
+            'level':'DEBUG',
+        }
+    }
+}

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.core.validators import MaxValueValidator
 from django.db.models.deletion import SET, SET_NULL
 
 
@@ -11,12 +12,24 @@ class Book(models.Model):
     categories = models.ManyToManyField("Category", related_name="books")
     release_date = models.DateField(auto_now=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    price = models.DecimalField(decimal_places=2, max_digits=5)
     active = models.BooleanField(default=False)
     isbn = models.CharField(max_length=13)
     created_by = models.ForeignKey(
         User, on_delete=SET_NULL, related_name="created_books", null=True
     )
+    price = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2, 
+        default=1.0, 
+        choices=(
+            (1.0, 1.0),
+            (2.0, 2.0),
+            (10.01, 10.01)
+        ),
+        validators=[MaxValueValidator(10.01)]
+    )
+    field=models.DecimalField(decimal_places=4, default=1, max_digits=1000)
+
 
 
 class Author(models.Model):
